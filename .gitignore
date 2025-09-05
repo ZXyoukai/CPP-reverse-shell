@@ -1,0 +1,12 @@
+# Compiled binaries
+client
+target
+
+# Object files
+*.o
+*.obj
+
+# Build artifacts
+*.exe
+*.out
+*.app
